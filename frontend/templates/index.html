@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}FlyLex - Главная{% endblock %}
+
+{% block content %}
+<style>
+    .hero {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+    .hero h1 {
+        font-size: 3rem;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+    .hero p {
+        color: var(--text-muted);
+        font-size: 1.2rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        margin-bottom: 30px;
+        border-bottom: 2px solid var(--accent-color);
+        display: inline-block;
+        padding-bottom: 5px;
+    }
+
+    /* Сетка товаров */
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 30px;
+    }
+
+    /* Компонент: Карточка товара (строгий минимализм) */
+    .product-card {
+        /* Основные стили уже в main.css, здесь добавляем внутреннюю структуру */
+        display: flex;
+        flex-direction: column;
+    }
+    .product-image {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .product-info {
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .product-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin: 0;
+    }
+    .product-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .product-price {
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+    .status-badge {
+        font-size: 0.8rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+    .status-in-stock {
+        background-color: rgba(0, 200, 83, 0.1);
+        color: #00c853;
+    }
+    .status-out-of-stock {
+        background-color: rgba(213, 0, 0, 0.1);
+        color: #d50000;
+    }
+</style>
+
+<div class="hero">
+    <h1>FPV Экипировка без компромиссов</h1>
+    <p>Надежные комплектующие и электроника для пилотов.</p>
+</div>
+
+<section>
+    <h2 class="section-title">Популярные товары</h2>
+    <div class="products-grid">
+
+        <a href="/product/1/" class="product-card">
+            <img src="/static/img/products/placeholder.jpg" alt="FlyLex LED Strip" class="product-image">
+            <div class="product-info">
+                <h3 class="product-title">FlyLex Ultra LED Strip 5V</h3>
+                <div class="product-meta">
+                    <span class="product-price">1 200 ₽</span>
+                    <span class="status-badge status-in-stock">В наличии</span>
+                </div>
+            </div>
+        </a>
+
+        <a href="/product/2/" class="product-card">
+            <img src="/static/img/products/placeholder.jpg" alt="FPV Frame" class="product-image">
+            <div class="product-info">
+                <h3 class="product-title">Рама FlyLex X5</h3>
+                <div class="product-meta">
+                    <span class="product-price">4 500 ₽</span>
+                    <span class="status-badge status-out-of-stock">Нет в наличии</span>
+                </div>
+            </div>
+        </a>
+
+    </div>
+</section>
+{% endblock %}
