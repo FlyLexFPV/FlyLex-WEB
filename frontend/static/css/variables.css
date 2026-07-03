@@ -1,0 +1,41 @@
+/* frontend/static/css/variables.css */
+
+/* Светлая тема (по умолчанию) */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #121212;
+  --text-muted: #666666;
+  --accent-color: #ffcc00; /* Фирменный желтый FlyLex */
+  --accent-hover: #e6b800;
+  --border-color: #e0e0e0;
+  --card-bg: #f9f9f9;
+
+  /* Тени и переходы для минималистичных анимаций */
+  --transition-speed: 0.3s;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Темная тема */
+[data-theme="dark"] {
+  --bg-color: #121212;
+  --text-color: #ffffff;
+  --text-muted: #a0a0a0;
+  --accent-color: #ffcc00;
+  --accent-hover: #ffd633;
+  --border-color: #2a2a2a;
+  --card-bg: #1e1e1e;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+/* Базовый сброс и применение переменных */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+  margin: 0;
+  padding: 0;
+}

@@ -1,77 +1,80 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}FlyLex - Название товара{% endblock %}
+{% block title %}FlyLex - {{ product.name }}{% endblock %}
 
 {% block content %}
 <style>
     .product-container { display: flex; flex-wrap: wrap; gap: 40px; margin-bottom: 60px; }
-
-    /* Галерея */
-    .product-gallery { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 15px; }
+    .product-gallery { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 15px; position: relative; }
+    .image-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
     .main-image { width: 100%; border-radius: 8px; border: 1px solid var(--border-color); object-fit: cover; }
+
+    .nav-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; padding: 15px; cursor: pointer; border-radius: 4px; font-size: 1.2rem; z-index: 2; }
+    .nav-arrow:hover { background: var(--accent-color); }
+    .prev-arrow { left: 10px; }
+    .next-arrow { right: 10px; }
+
     .gallery-thumbnails { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
-    .thumbnail { width: 80px; height: 80px; object-fit: cover; cursor: pointer; border: 1px solid var(--border-color); border-radius: 4px; opacity: 0.6; transition: opacity var(--transition-speed), border-color var(--transition-speed); }
+    .thumbnail { width: 80px; height: 80px; object-fit: cover; cursor: pointer; border: 1px solid var(--border-color); border-radius: 4px; opacity: 0.6; transition: 0.3s; }
     .thumbnail.active, .thumbnail:hover { opacity: 1; border-color: var(--accent-color); }
 
-    /* Информация */
     .product-details { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px; }
-    .product-title-large { font-size: 2rem; margin: 0; }
-    .price-block { font-size: 2rem; font-weight: 700; color: var(--text-color); }
+    /* Возвращаем сбалансированный размер шрифта */
+    .product-title-large { font-size: 2rem; margin: 0; line-height: 1.2; font-weight: 700; }
+    .price-block { font-size: 2rem; font-weight: 700; color: var(--text-color); margin: 5px 0; }
 
-    /* Элементы управления */
-    .controls-row { display: flex; align-items: center; gap: 20px; }
-    .quantity-selector { display: flex; align-items: center; border: 1px solid var(--border-color); border-radius: 4px; overflow: hidden; }
-    .quantity-btn { background: var(--bg-color); color: var(--text-color); border: none; padding: 10px 15px; cursor: pointer; font-size: 1.2rem; transition: background var(--transition-speed); }
-    .quantity-btn:hover { background: var(--card-bg); }
-    .quantity-value { padding: 0 15px; font-weight: 600; font-size: 1.1rem; }
+    .action-buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 10px; width: 100%; }
+    .btn-block { width: 100%; padding: 15px; font-size: 1.1rem; text-align: center; box-sizing: border-box; }
 
-    .action-buttons { display: flex; gap: 15px; margin-top: 10px; }
-    .btn-tg { background-color: transparent; border: 1px solid var(--text-color); }
+    .quantity-selector { display: flex; align-items: center; justify-content: flex-start; border: 1px solid var(--border-color); border-radius: 4px; overflow: hidden; background: var(--bg-color); width: fit-content; }
+    .quantity-btn { background: var(--bg-color); color: var(--text-color); border: none; padding: 8px 15px; cursor: pointer; font-size: 1.1rem; }
+    .quantity-value { font-weight: 600; min-width: 40px; text-align: center; }
 
-    /* Табы */
     .tabs-container { margin-top: 40px; }
     .tab-buttons { display: flex; gap: 30px; border-bottom: 1px solid var(--border-color); margin-bottom: 25px; }
-    .tab-btn { background: none; border: none; font-size: 1.1rem; padding: 0 0 10px 0; cursor: pointer; color: var(--text-muted); font-weight: 500; transition: color var(--transition-speed); }
-    .tab-btn:hover { color: var(--text-color); }
+    .tab-btn { background: none; border: none; font-size: 1.1rem; padding: 0 0 10px 0; cursor: pointer; color: var(--text-muted); }
     .tab-btn.active { color: var(--text-color); border-bottom: 2px solid var(--accent-color); }
-
-    .tab-content { display: none; line-height: 1.6; }
-    .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
-    .tab-content ul { padding-left: 20px; margin: 0; }
-    .tab-content li { margin-bottom: 10px; }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(5px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
 </style>
 
 <div class="product-container">
     <div class="product-gallery">
-        <img src="/static/img/products/placeholder.jpg" id="mainImage" class="main-image" alt="FlyLex LED">
+        <div class="image-wrapper">
+            <button class="nav-arrow prev-arrow" onclick="moveSlide(-1)">❮</button>
+            <img src="{% if product.images.first %}{{ product.images.first.image.url }}{% else %}{% static 'img/products/placeholder.jpg' %}{% endif %}" id="mainImage" class="main-image" alt="{{ product.name }}">
+            <button class="nav-arrow next-arrow" onclick="moveSlide(1)">❯</button>
+        </div>
         <div class="gallery-thumbnails">
-            <img src="/static/img/products/placeholder.jpg" class="thumbnail active" onclick="changeImage(this)">
-            <img src="/static/img/products/placeholder-2.jpg" class="thumbnail" onclick="changeImage(this)">
+            {% for img in product.images.all %}
+                <img src="{{ img.image.url }}" class="thumbnail {% if forloop.first %}active{% endif %}" onclick="setSlide({{ forloop.counter0 }})">
+            {% endfor %}
         </div>
     </div>
 
     <div class="product-details">
-        <h1 class="product-title-large">FlyLex Ultra LED Strip 5V</h1>
-        <span class="status-badge status-in-stock" style="width: fit-content;">В наличии</span>
+        <h1 class="product-title-large">{{ product.name }}</h1>
+        <div class="price-block">{{ product.price }} ₽</div>
 
-        <div class="price-block">1 200 ₽</div>
+        <div class="action-buttons" id="cart-actions-wrapper"
+             data-slug="{{ product.slug }}"
+             data-name="{{ product.name|escapejs }}"
+             data-price="{{ product.price }}"
+             data-images='[{% for img in product.images.all %}"{{ img.image.url }}"{% if not forloop.last %},{% endif %}{% endfor %}]'>
 
-        <div class="controls-row">
-            <div class="quantity-selector">
-                <button class="quantity-btn" onclick="updateQty(-1)">-</button>
-                <span id="qtyCounter" class="quantity-value">1</span>
-                <button class="quantity-btn" onclick="updateQty(1)">+</button>
-            </div>
-        </div>
+            {% if product.is_in_stock %}
+                <button id="add-to-cart-btn" class="btn btn-primary btn-block" onclick="initCartItem()">В корзину</button>
+                <div id="qty-selector-ui" class="quantity-selector" style="display: none;">
+                    <button class="quantity-btn" onclick="changeProductQty(-1)">-</button>
+                    <span id="product-qty-val" class="quantity-value">1</span>
+                    <button class="quantity-btn" onclick="changeProductQty(1)">+</button>
+                </div>
+            {% else %}
+                <button class="btn btn-secondary btn-block" disabled>Нет в наличии</button>
+            {% endif %}
 
-        <div class="action-buttons">
-            <button class="btn btn-primary" style="flex: 1; padding: 15px; font-size: 1.1rem;">В корзину</button>
-            <a href="https://t.me/FlyLex_Admin" target="_blank" class="btn btn-tg" style="padding: 15px; text-decoration: none; display: flex; align-items: center; justify-content: center;">Задать вопрос</a>
+            <a href="https://t.me/FlyLex_Admin" target="_blank" class="btn btn-outline btn-block" style="text-decoration:none;">Задать вопрос</a>
         </div>
     </div>
 </div>
@@ -81,29 +84,9 @@
         <button class="tab-btn active" onclick="openTab(event, 'specs')">Характеристики</button>
         <button class="tab-btn" onclick="openTab(event, 'package')">Комплектация</button>
     </div>
-
-    <div id="specs" class="tab-content active">
-        <ul>
-            <li>Напряжение питания: 5V</li>
-            <li>Цвета: Желтый / Белый</li>
-            <li>Степень влагозащиты: IP65</li>
-        </ul>
-    </div>
-
-    <div id="package" class="tab-content">
-        <ul>
-            <li>Светодиодная лента FlyLex — 2 шт.</li>
-            <li>Провода для пайки (AWG30) — 4 шт.</li>
-            <li>Термоусадка — 1 комплект</li>
-        </ul>
-    </div>
+    <div id="specs" class="tab-content active"><ul>{% for char in product.characteristics %}<li>{{ char }}</li>{% endfor %}</ul></div>
+    <div id="package" class="tab-content"><ul>{% for item in product.package_contents %}<li>{{ item }}</li>{% endfor %}</ul></div>
 </div>
-
-<section style="margin-top: 60px;">
-    <h2 class="section-title">С этим товаром смотрят</h2>
-    </section>
 {% endblock %}
 
-{% block scripts %}
-<script src="/static/js/product.js"></script>
-{% endblock %}
+{% block scripts %}<script src="{% static 'js/product.js' %}"></script>{% endblock %}
