@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}FlyLex - Название товара{% endblock %}
+
+{% block content %}
+<style>
+    .product-container { display: flex; flex-wrap: wrap; gap: 40px; margin-bottom: 60px; }
+
+    /* Галерея */
+    .product-gallery { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 15px; }
+    .main-image { width: 100%; border-radius: 8px; border: 1px solid var(--border-color); object-fit: cover; }
+    .gallery-thumbnails { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
+    .thumbnail { width: 80px; height: 80px; object-fit: cover; cursor: pointer; border: 1px solid var(--border-color); border-radius: 4px; opacity: 0.6; transition: opacity var(--transition-speed), border-color var(--transition-speed); }
+    .thumbnail.active, .thumbnail:hover { opacity: 1; border-color: var(--accent-color); }
+
+    /* Информация */
+    .product-details { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px; }
+    .product-title-large { font-size: 2rem; margin: 0; }
+    .price-block { font-size: 2rem; font-weight: 700; color: var(--text-color); }
+
+    /* Элементы управления */
+    .controls-row { display: flex; align-items: center; gap: 20px; }
+    .quantity-selector { display: flex; align-items: center; border: 1px solid var(--border-color); border-radius: 4px; overflow: hidden; }
+    .quantity-btn { background: var(--bg-color); color: var(--text-color); border: none; padding: 10px 15px; cursor: pointer; font-size: 1.2rem; transition: background var(--transition-speed); }
+    .quantity-btn:hover { background: var(--card-bg); }
+    .quantity-value { padding: 0 15px; font-weight: 600; font-size: 1.1rem; }
+
+    .action-buttons { display: flex; gap: 15px; margin-top: 10px; }
+    .btn-tg { background-color: transparent; border: 1px solid var(--text-color); }
+
+    /* Табы */
+    .tabs-container { margin-top: 40px; }
+    .tab-buttons { display: flex; gap: 30px; border-bottom: 1px solid var(--border-color); margin-bottom: 25px; }
+    .tab-btn { background: none; border: none; font-size: 1.1rem; padding: 0 0 10px 0; cursor: pointer; color: var(--text-muted); font-weight: 500; transition: color var(--transition-speed); }
+    .tab-btn:hover { color: var(--text-color); }
+    .tab-btn.active { color: var(--text-color); border-bottom: 2px solid var(--accent-color); }
+
+    .tab-content { display: none; line-height: 1.6; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+    .tab-content ul { padding-left: 20px; margin: 0; }
+    .tab-content li { margin-bottom: 10px; }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="product-container">
+    <div class="product-gallery">
+        <img src="/static/img/products/placeholder.jpg" id="mainImage" class="main-image" alt="FlyLex LED">
+        <div class="gallery-thumbnails">
+            <img src="/static/img/products/placeholder.jpg" class="thumbnail active" onclick="changeImage(this)">
+            <img src="/static/img/products/placeholder-2.jpg" class="thumbnail" onclick="changeImage(this)">
+        </div>
+    </div>
+
+    <div class="product-details">
+        <h1 class="product-title-large">FlyLex Ultra LED Strip 5V</h1>
+        <span class="status-badge status-in-stock" style="width: fit-content;">В наличии</span>
+
+        <div class="price-block">1 200 ₽</div>
+
+        <div class="controls-row">
+            <div class="quantity-selector">
+                <button class="quantity-btn" onclick="updateQty(-1)">-</button>
+                <span id="qtyCounter" class="quantity-value">1</span>
+                <button class="quantity-btn" onclick="updateQty(1)">+</button>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" style="flex: 1; padding: 15px; font-size: 1.1rem;">В корзину</button>
+            <a href="https://t.me/FlyLex_Admin" target="_blank" class="btn btn-tg" style="padding: 15px; text-decoration: none; display: flex; align-items: center; justify-content: center;">Задать вопрос</a>
+        </div>
+    </div>
+</div>
+
+<div class="tabs-container">
+    <div class="tab-buttons">
+        <button class="tab-btn active" onclick="openTab(event, 'specs')">Характеристики</button>
+        <button class="tab-btn" onclick="openTab(event, 'package')">Комплектация</button>
+    </div>
+
+    <div id="specs" class="tab-content active">
+        <ul>
+            <li>Напряжение питания: 5V</li>
+            <li>Цвета: Желтый / Белый</li>
+            <li>Степень влагозащиты: IP65</li>
+        </ul>
+    </div>
+
+    <div id="package" class="tab-content">
+        <ul>
+            <li>Светодиодная лента FlyLex — 2 шт.</li>
+            <li>Провода для пайки (AWG30) — 4 шт.</li>
+            <li>Термоусадка — 1 комплект</li>
+        </ul>
+    </div>
+</div>
+
+<section style="margin-top: 60px;">
+    <h2 class="section-title">С этим товаром смотрят</h2>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/product.js"></script>
+{% endblock %}
